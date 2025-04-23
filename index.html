@@ -321,17 +321,52 @@
 
         <footer>
             <p>© 2025 我的网页集合</p>
-            <p class="last-updated">最后更新: <span id="last-updated-date">2025年4月23日</span></p>
+            <p class="last-updated">最后更新: <span id="last-updated-date"></span></p>
         </footer>
     </div>
 
     <script>
-        // 自动更新最后更新日期
-        document.getElementById('last-updated-date').textContent = new Date().toLocaleDateString('zh-CN', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
+        // 获取仓库最后更新时间
+        async function fetchLastUpdatedTime() {
+            const username = 'fengshengbanxia'; // 您的GitHub用户名
+            const repo = 'website'; // 您的仓库名
+            const apiUrl = `https://api.github.com/repos/${username}/${repo}/commits?per_page=1`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (data && data.length > 0 && data[0].commit) {
+                    // 获取最新提交的日期
+                    const lastCommitDate = new Date(data[0].commit.committer.date);
+                    document.getElementById('last-updated-date').textContent = lastCommitDate.toLocaleDateString('zh-CN', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }) + ' ' + lastCommitDate.toLocaleTimeString('zh-CN', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    return;
+                }
+            } catch (error) {
+                console.error('获取最后更新时间失败:', error);
+            }
+
+            // 如果获取失败，使用当前时间
+            const now = new Date();
+            document.getElementById('last-updated-date').textContent = now.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }) + ' ' + now.toLocaleTimeString('zh-CN', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // 页面加载时获取最后更新时间
+        fetchLastUpdatedTime();
 
         // 动态获取仓库中的HTML文件并生成链接
         // 分页变量
