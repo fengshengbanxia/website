@@ -235,32 +235,25 @@
 
                     // 为不同页面设置预览图
                     let previewImage = '';
+
+                    // 从仓库的image目录获取预览图
+                    // 预览图的文件名与HTML文件名相同，只是扩展名为png
                     const baseUrl = window.location.origin; // 获取当前域名
-                    const pageUrl = `${baseUrl}/${file.name}`;
+                    const imageName = file.name.replace('.html', '.png');
+                    previewImage = `${baseUrl}/image/${imageName}`;
 
-                    // 首先尝试使用第三方截图服务
-                    // 使用免费的Thum.io服务
-                    previewImage = `https://image.thum.io/get/width/800/crop/600/viewportWidth/1200/png/${encodeURIComponent(pageUrl)}`;
+                    // 如果是chengdu_trip.html，使用对应的chengdu_trip.png
+                    if (file.name === 'chengdu_trip.html') {
+                        previewImage = `${baseUrl}/image/chengdu_trip.png`;
+                    }
 
-                    // 添加预定义的预览图作为备用
-                    // 如果截图服务失败，将使用这些预定义的图片
-                    const fallbackImages = {
-                        'calculator.html': 'https://i.imgur.com/JQn6ARR.png',
-                        'alarm-clock.html': 'https://i.imgur.com/8XKQzH3.png',
-                        'color-palette.html': 'https://i.imgur.com/pSZCJqL.png',
-                        'cursor_update_0.49.x.html': 'https://i.imgur.com/vTJXJKM.png',
-                        'hangzhou-may-day-trip.html': 'https://i.imgur.com/YfLMEKw.png',
-                        'default': 'https://i.imgur.com/JdtJFJd.png'
-                    };
-
-                    // 创建卡片元素
                     const card = document.createElement('div');
                     card.className = 'page-card';
                     card.innerHTML = `
                         <div class="card-header">${title}</div>
                         <div class="card-body">
                             <div class="page-preview">
-                                <img src="${previewImage}" alt="${title} 预览" onerror="this.onerror=null; this.src='${fallbackImages[file.name] || fallbackImages['default']}'">
+                                <img src="${previewImage}" alt="${title} 预览" onerror="this.onerror=null; this.src='${baseUrl}/image/default.png'">
                             </div>
                             <p class="page-description">点击访问${title}页面</p>
                             <a href="${file.name}" class="page-link">访问页面</a>
@@ -278,14 +271,6 @@
                         <p>错误信息: ${error.message}</p>
                     </div>
                 `;
-            }
-        }
-
-        // 更新卡片图片的函数
-        function updateCardImage(card, imageUrl) {
-            const imgElement = card.querySelector('.page-preview img');
-            if (imgElement) {
-                imgElement.src = imageUrl;
             }
         }
 
