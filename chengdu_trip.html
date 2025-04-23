@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成都五一5日双人旅行计划</title>
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/2.2.19/tailwind.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <style>
+        :root {
+            --primary-color: #FF7F50; /* 珊瑚色 */
+            --secondary-color: #FA8072; /* 鲑鱼色 */
+            --accent-color: #E9967A;   /* 深鲑鱼色 */
+            --text-color-dark: #333333;
+            --text-color-light: #777777;
+            --bg-color-light: #f9f9f9;
+            --bg-color-card: #ffffff;
+            --border-color: #e0e0e0;
+        }
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            color: var(--text-color-dark);
+            background-color: var(--bg-color-light);
+            line-height: 1.6;
+        }
+        .serif-font {
+            font-family: 'Noto Serif SC', serif;
+        }
+        .container {
+            max-width: 1080px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        .card {
+            background-color: var(--bg-color-card);
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+        }
+        .card-body {
+            padding: 1rem;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table th, .table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+        .table th {
+            font-weight: 600;
+        }
+        .text-primary { color: var(--primary-color); }
+        .text-secondary { color: var(--secondary-color); }
+        .text-accent { color: var(--accent-color); }
+        .bg-primary { background-color: var(--primary-color); }
+        .bg-secondary { background-color: var(--secondary-color); }
+        .bg-accent { background-color: var(--accent-color); }
+        a { color: var(--secondary-color); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .icon-link { display: inline-flex; align-items: center; }
+        .icon-link i { margin-right: 0.5rem; }
+
+        /* 地图样式 */
+        #map { height: 300px; border-radius: 0.5rem; margin-top: 1rem; }
+
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container py-10">
+        <!-- 行程标题区 -->
+        <section class="text-center mb-8">
+            <h1 class="serif-font text-4xl font-bold text-primary mb-2">成都五一旅行计划</h1>
+            <p class="text-lg text-gray-600">旅行日期：5天</p>
+            <p class="text-lg text-gray-600">旅行者：双人</p>
+            <div class="flex items-center justify-center mt-2">
+                <i class="fas fa-sun text-xl text-primary mr-2"></i>
+                <p class="text-gray-700">天气概况：多云转小雨，13°C - 37°C，早晚温差大</p>
+            </div>
+        </section>
+
+        <!-- 行程概览区 -->
+        <section class="mb-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="serif-font text-xl font-semibold"><i class="fas fa-list-alt mr-2"></i>行程概览</h2>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>主题</th>
+                                <th>主要活动/景点</th>
+                                <th>天气</th>
+                                <th>美食</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Day 1</td>
+                                <td>老成都休闲体验</td>
+                                <td>宽窄巷子 - 人民公园</td>
+                                <td><i class="fas fa-cloud"></i> 多云</td>
+                                <td>川菜</td>
+                            </tr>
+                            <tr>
+                                <td>Day 2</td>
+                                <td>三国文化探寻</td>
+                                <td>武侯祠 - 锦里 - 川剧表演</td>
+                                <td><i class="fas fa-cloud-rain"></i> 小雨</td>
+                                <td>川菜/小吃</td>
+                            </tr>
+                            <tr>
+                                <td>Day 3</td>
+                                <td>熊猫与禅意</td>
+                                <td>熊猫基地 - 文殊院</td>
+                                <td><i class="fas fa-cloud"></i> 多云</td>
+                                <td>川菜/面食</td>
+                            </tr>
+                            <tr>
+                                <td>Day 4</td>
+                                <td>世界遗产 & 道教名山</td>
+                                <td>都江堰 - 青城山</td>
+                                <td><i class="fas fa-cloud-sun-rain"></i> 多云转小雨</td>
+                                <td>川菜/农家菜</td>
+                            </tr>
+                            <tr>
+                                <td>Day 5</td>
+                                <td>自由探索 & 返程</td>
+                                <td>自由活动 - 返程</td>
+                                <td><i class="fas fa-cloud"></i> 多云</td>
+                                <td>火锅</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 详细时间表区 -->
+        <section class="mb-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="serif-font text-xl font-semibold"><i class="fas fa-calendar-alt mr-2"></i>详细时间表</h2>
+                </div>
+                <div class="card-body">
+                    <!-- Day 1 -->
+                    <h3 class="serif-font text-xl font-semibold mb-4 text-secondary"><i class="far fa-calendar-check mr-2"></i> Day 1: 老成都休闲体验</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>地点</th>
+                                <th>活动描述</th>
+                                <th>停留时间</th>
+                                <th>门票/预订</th>
+                                <th>交通方式</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>上午</td>
+                                <td>成都双流机场/火车站</td>
+                                <td>抵达成都，前往酒店办理入住</td>
+                                <td>灵活安排</td>
+                                <td>-</td>
+                                <td>机场/火车站交通</td>
+                            </tr>
+                            <tr>
+                                <td>中午</td>
+                                <td><a href="https://amap.com/search?query=%E5%AE%BD%E7%AA%84%E5%B7%B7%E5%AD%90&city=%E6%88%90%E9%83%BD" target="_blank" class="icon-link"><i class="fas fa-map-marker-alt text-accent"></i>宽窄巷子</a></td>
+                                <td>午餐自理，自由逛街，体验老成都的慢生活，品尝特色小吃</td>
+                                <td>3-4小时</td>
+                                <td>免费</td>
+                                <td>地铁/公交</td>
+                            </tr>
+                            <tr>
+                                <td>下午</td>
+                                <td><a href="https://amap.com/search?query=%E4%BA%BA%E6%B0%91%E5%85%AC%E5%9B%AD&city=%E6%88%90%E9%83%BD" target="_blank" class="icon-link"><i class="fas fa-map-marker-alt text-accent"></i>人民公园</a></td>
+                                <td>在茶馆体验成都的茶文化，感受 местными居民的休闲生活</td>
+                                <td>2-3小时</td>
+                                <td>茶馆消费自理</td>
+                                <td>步行/共享单车</td>
+                            </tr>
+                            <tr>
+                                <td>傍晚</td>
+                                <td><a href="https://amap.com/search?query=%E9%99%88%E9%BA%BB%E5%A9%86%E8%B1%86%E8%85%90(%E6%80%BB%E5%BA%97)&city=%E6%88%90%E9%83%BD" target="_blank" class="icon-link"><i class="fas fa-map-marker-alt text-accent"></i>陈麻婆豆腐(总店)</a></td>
+                                <td>晚餐，品尝正宗的陈麻婆豆腐等经典川菜</td>
+                                <td>1-2小时</td>
+                                <td>人均约80-120元，建议提前预订</td>
+                                <td>公交/出租车</td>
+                            </tr>
+                            <tr>
+                                <td>晚上</td>
+                                <td>酒店</td>
+                                <td>自由活动，休息</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Day 2 -->
+                    <h3 class="serif-font text-xl font-semibold mb-4 text-secondary"><i class="far fa-calendar-check mr-2"></i> Day 2: 三国文化探寻</h3>
+                     <table class="table">
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>地点</th>
+                                <th>活动描述</th>
+                                <th>停留时间</th>
+                                <th>门票/预订</th>
+                                <th>交通方式</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>上午</td>
+                                <td><a href="https://amap.com/search?query=%E6%AD%A6%E4%BE%AF%E7%A5%A0&city=%E6%88%90%E9%83%BD" target="_blank" class="icon-link"><i class="fas fa-map-marker-alt text-accent"></i>武侯祠</a></td>
+                                <td>参观武侯祠，了解三国历史文化，瞻仰诸葛亮</td>
+                                <td>2-3小时</td>
+                                <td>门票：约50-60元，建议提前网上购票</td>
+                                <td>公交/地铁</td>
+                            </tr>
+                            <tr>
+                                <td>中午</td>
+                                <td><a href="https://amap.com/search?query=%E9%94%A6%E9%87%8C&city=%E6%88%90%E9%83%BD" target="_blank" class="icon-link"><i class="fas fa-map-marker-alt text-accent"></i>锦里</a></td>
+                                <td>午餐在锦里品尝四川小吃，感受古街风韵</td>
+                                <td>2-3小时</td>
+                                <td>小吃消费自理</td>
+                                <td>步行（紧邻武侯祠）</td>
+                            </tr>
+                            <tr>
+                                <td>下午</td>
+                                <td><a href="https://amap.com/search?query=%E9%94%A6%E9%87%8C&city=%E6%88%90%E9%83%BD" target="_blank" class="icon-link"><i class="fas fa-map-marker-alt text-accent"></i>锦里</a></td>
+                                <td>继续在锦里游览，可以逛特色店铺，拍照留念</td>
+                                <td>2-3小时</td>
+                                <td>免费</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>傍晚</td>
+                                <td><a href="https://amap.com/search?query=%E9%94%A6%E9%87%8C&city=%E6%88%90%E9%83%BD" target="_blank" class="icon-link"><i class="fas fa-map-marker-alt text-accent"></i>锦里</a></td>
+                                <td>晚餐在锦里选择喜欢的餐馆用餐</td>
+                                <td>1-2小时</td>
+                                <td>人均丰俭由人</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>晚上</td>
+                                <td><a href="https://amap.com/search?query=%E5%B7%9D%E5%89%A7%E9%99%A2&city=%E6%88%90%E9%83%BD" target="_blank" class="icon-link"><i class="fas fa-map-marker-alt text-accent"></i>川剧院(可选)</a></td>
+                                <td>观看精彩的川剧表演（变脸、吐火等），感受川剧魅力</td>
+                                <td>2-3小时</td>
+                                <td>门票：约150-300元，建议提前预订</td>
+                                <td>出租车/公交</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Day 3 -->
+                     <h3 class="serif-font text-xl font-semibold mb-4 text-secondary"><i class="far fa-calendar-check mr-2"></i> Day 3: 熊猫与禅意</h3>
+                     <table class="table">
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>地点</th>
+                                <th>活动描述</th>
+                                <th>停留时间</th>
+                                <th>门票/预订</th>
+                                <th>交通方式</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>上午</td>
+                                <td><a href="https://amap.com/search?query=%E6%88%90%E9%83%BD%E5%A4%A7%E7%86%8A%E7%8C%AB%E7%B9%81%E8%82%B2%E7%A0%94%E7%A9%B6%E5%9F%BA%E5%9C%B0&city=%E6%88%90%E9%83%BD" target="_blank" class="icon-link"><i class="fas fa-map-marker-alt text-accent"></i>成都大熊猫繁育研究基地</a></td>
+                                <td>参观熊猫基地，近距离观看憨态可掬的大熊猫，了解熊猫的生活习性和保护工作</td>
+                                <td>3-4小时</td>
+                                <td>门票：约55元，建议提前网上购票，错峰参观</td>
+                                <td>公交/地铁/熊猫基地直通车</td>
+                            </tr>
+                            <tr>
+                                <td>中午</td>
+                                <td>熊猫基地附近/市区</td>
+                                <td>午餐自理，可在熊猫基地内或返回市区用餐</td>
+                                <td>1-1.5小时</td>
+                                <td>丰俭由人</td>
+                                <td>交通工具选择取决于用餐地点</td>
+                            </tr>
+                            <tr>
+                                <td>下午</td>
+                                <td><a href="https://amap.com/search?query=%E6%96%87%E6%AE%8A%E9%99%A2&city=%E6%88%90%E9%83%BD" target="_blank" class="icon-link"><i class="fas fa-map-marker-alt text-accent"></i>文殊院</a></td>
+                                <td>参观千年古刹文殊院，感受禅宗文化，品尝文殊院素斋（可选）</td>
+                                <td>2-3小时</td>
+                                <td>免费，素斋消费自理</td>
+                                <td>地铁/公交</td>
+                            </tr>
+                            <tr>
+                                <td>傍晚</td>
+                                <td><a href="https://amap.com/search?query=%E9%BE%99%E6%8A%84%E6%89%8B(%E6%98%A5%E7%86%99%E8%B7%AF%E6%80%BB%E5%BA%97)&city=%E6%88%90%E9%83%BD" target="_blank" class="icon-link"><i class="fas fa-map-marker-alt text-accent"></i>龙抄手(春熙路总店)</a></td>
+                                <td>晚餐，品尝成都名小吃龙抄手、钟水饺等</td>
+                                <td>1-2小时</td>
+                                <td>人均约50-80元</td>
+                                <td>公交/地铁</td>
+                            </tr>
+                            <tr>
+                                <td>晚上</td>
+                                <td>春熙路/太古里(可选)</td>
+                                <td>饭后可在春熙路、太古里商圈逛街，感受成都的时尚气息</td>
+                                <td>灵活安排</td>
+                                <td>-</td>
+                                <td>步行/地铁</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Day 4 -->
+                     <h3 class="serif-font text-xl font-semibold mb-4 text-secondary"><i class="far fa-calendar-check mr-2"></i> Day 4: 世界遗产 & 道教名山</h3>
+                     <table class="table">
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>地点</th>
+                                <th>活动描述</th>
+                                <th>停留时间</th>
+                                <th>门票/预订</th>
+                                <th>交通方式</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>上午</td>
+                                <td><a href="https://amap.com/search?query=%E9%83%BD%E6%B1%9F%E5%A0%B0%E6%99%AF%E5%8C%BA&city=%E6%88%90%E9%83%BD" target="_blank" class="icon-link"><i class="fas fa-map-marker-alt text-accent"></i>都江堰景区</a></td>
+                                <td>参观世界文化遗产都江堰水利工程，了解古代水利工程的伟大智慧</td>
+                                <td>3-4小时</td>
+                                <td>门票：约80-90元，建议提前网上购票</td>
+                                <td>成都茶店子客运站乘坐班车至都江堰市</td>
+                            </tr>
+                            <tr>
+                                <td>中午</td>
+                                <td>都江堰/青城山</td>
+                                <td>午餐在都江堰或前往青城山途中用餐，品尝当地特色菜</td>
+                                <td>1-1.5小时</td>
+                                <td>农家菜/川菜，丰俭由人</td>
+                                <td>包车/出租车/公交</td>
+                            </tr>
+                            <tr>
+                                <td>下午</td>
+                                <td><a href="https://amap.com/search?query=%E9%9D%92%E5%9F%8E%E5%B1%B1(%E5%89%8D%E5%B1%B1)&city=%E6%88%90%E9%83%BD" target="_blank" class="icon-link"><i class="fas fa-map-marker-alt text-accent"></i>青城山（前山）</a></td>
+                                <td>游览道教名山青城山前山景区，感受道教文化和自然风光</td>
+                                <td>3-4小时</td>
+                                <td>门票：青城前山约80-90元，建议提前网上购票</td>
+                                <td>景区内部步行/索道</td>
+                            </tr>
+                            <tr>
+                                <td>傍晚</td>
+                                <td>青城山脚下</td>
+                                <td>晚餐在青城山脚下品尝青城山老腊肉、野菜等特色农家菜</td>
+                                <td>1-2小时</td>
+                                <td>人均约80-150元</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>晚上</td>
+                                <td>返回成都/酒店</td>
+                                <td>返回成都，或入住青城山附近酒店</td>
+                                <td>2-3小时</td>
+                                <td>返回成都交通：班车/快铁，入住酒店自理</td>
+                                <td>班车/快铁/出租车</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Day 5 -->
+                     <h3 class="serif-font text-xl font-semibold mb-4 text-secondary"><i class="far fa-calendar-check mr-2"></i> Day 5: 自由探索 & 返程</h3>
+                     <table class="table">
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>地点</th>
+                                <th>活动描述</th>
+                                <th>停留时间</th>
+                                <th>门票/预订</th>
+                                <th>交通方式</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>上午</td>
+                                <td>自由活动</td>
+                                <td>根据个人兴趣选择美食探索、购物或参观博物馆/美术馆</td>
+                                <td>灵活安排</td>
+                                <td>- (门票根据具体场馆而定)</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>中午</td>
+                                <td>自由活动</td>
+                                <td>午餐自理</td>
+                                <td>-</td>
+                                <td>丰俭由人</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>下午</td>
+                                <td>自由活动/酒店</td>
+                                <td>继续自由活动或返回酒店稍作休息</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>傍晚</td>
+                                <td><a href="https://amap.com/search?query=%E8%9C%80%E4%B9%9D%E9%A6%99%E7%81%AB%E9%94%85&city=%E6%88%90%E9%83%BD" target="_blank" class="icon-link"><i class="fas fa-map-marker-alt text-accent"></i>蜀九香/小龙坎火锅(可选)</a></td>
+                                <td>晚餐，品尝成都火锅，感受麻辣鲜香</td>
+                                <td>1-2小时</td>
+                                <td>人均约100-200元，建议提前预订</td>
+                                <td>公交/出租车</td>
+                            </tr>
+                            <tr>
+                                <td>晚上</td>
+                                <td>成都双流机场/火车站</td>
+                                <td>前往机场/火车站，返回温馨的家</td>
+                                <td>灵活安排</td>
+                                <td>-</td>
+                                <td>机场/火车站交通</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 实用信息区 -->
+        <section class="mb-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="serif-font text-xl font-semibold"><i class="fas fa-info-circle mr-2"></i>实用信息</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="list-disc list-inside">
+                        <li><strong>紧急联系电话：</strong> 110 (报警), 120 (急救), 119 (火警)</li>
+                        <li><strong>重要提示和注意事项：</strong>
+                            <ul class="list-disc list-inside ml-5 mt-2">
+                                <li>五一期间是旅游旺季，请务必提前预订机票、酒店、门票和演出票。</li>
+                                <li>成都天气多变，请关注天气预报，携带雨具和合适的衣物。</li>
+                                <li>川菜以麻辣为主，口味偏重，请根据个人喜好调整。</li>
+                                <li>在景区和人多场所注意保管好个人财物。</li>
+                                <li>尊重当地风俗习惯。</li>
+                            </ul>
+                        </li>
+                        <li><strong>预算摘要 (双人，仅供参考):</strong>
+                            <ul class="list-disc list-inside ml-5 mt-2">
+                                <li>交通：约2000-4000元 (往返机票/火车票)</li>
+                                <li>住宿：约2000-4000元 (5晚， средний уровень )</li>
+                                <li>餐饮：约2500-3500元 (5天)</li>
+                                <li>门票/演出：约500-800元</li>
+                                <li>其他 (交通、购物等)：约1000-2000元</li>
+                                <li class="font-semibold">总计：约8000-14000元 (丰俭由人)</li>
+                            </ul>
+                        </li>
+                        <li><strong>行李清单提醒:</strong>
+                            <ul class="list-disc list-inside ml-5 mt-2">
+                                <li>证件类：身份证、银行卡、少量现金</li>
+                                <li>衣物类：换洗衣物、外套（早晚温差大）、雨具</li>
+                                <li>日用品：洗漱用品、护肤品、防晒霜、太阳镜</li>
+                                <li>其他： 常用药品、充电器、移动电源、相机</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 地图展示区域 (可以考虑 Leaflet.js 地图，此处先占位) -->
+        <section class="mb-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="serif-font text-xl font-semibold"><i class="fas fa-map-marked-alt mr-2"></i> 景点地图</h2>
+                </div>
+                <div class="card-body">
+                    <div id="map"></div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        var map = L.map('map').setView([30.66, 104.06], 12); // 成都中心
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // 景点标记 (示例 - 需要替换为实际景点坐标)
+        var locations = [
+            { name: '宽窄巷子', coords: [30.671, 104.062] },
+            { name: '人民公园', coords: [30.663, 104.071] },
+            { name: '武侯祠', coords: [30.645, 104.041] },
+            { name: '锦里', coords: [30.643, 104.043] },
+            { name: '熊猫基地', coords: [30.783, 104.117] },
+            { name: '文殊院', coords: [30.674, 104.075] },
+            { name: '都江堰', coords: [31.014, 103.663] },
+            { name: '青城山', coords: [30.996, 103.532] }
+        ];
+
+        locations.forEach(loc => {
+            L.marker(loc.coords).addTo(map)
+                .bindPopup(loc.name);
+        });
+    </script>
+</body>
+</html>
