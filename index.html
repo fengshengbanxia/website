@@ -119,15 +119,30 @@
             color: #888;
         }
 
+        .loading-message,
+        .error-message {
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+        }
+
+        .error-message {
+            background-color: #fff3f3;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
         @media (max-width: 768px) {
             .page-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             header {
                 padding: 20px 15px;
             }
-            
+
             h1 {
                 font-size: 1.8rem;
             }
@@ -138,66 +153,14 @@
     <div class="container">
         <header>
             <h1>我的网页导航</h1>
-            <div class="subtitle">所有可用页面的集合</div>
+            <div class="subtitle">所有可用页面的集合（自动更新）</div>
         </header>
 
         <div class="page-grid">
-            <!-- 计算器 -->
-            <div class="page-card">
-                <div class="card-header">网页计算器</div>
-                <div class="card-body">
-                    <p class="page-description">一个功能齐全的网页计算器，支持标准和科学计算功能，多种主题可选。</p>
-                    <a href="calculator.html" class="page-link">访问页面</a>
-                </div>
+            <!-- 页面卡片将通过JavaScript动态生成 -->
+            <div class="loading-message" style="text-align: center; grid-column: 1/-1; padding: 30px;">
+                <p>正在加载页面列表...</p>
             </div>
-
-            <!-- 闹钟 -->
-            <div class="page-card">
-                <div class="card-header">网页闹钟</div>
-                <div class="card-body">
-                    <p class="page-description">设置和管理多个闹钟，支持自定义铃声和主题。</p>
-                    <a href="alarm-clock.html" class="page-link">访问页面</a>
-                </div>
-            </div>
-
-            <!-- 调色板 -->
-            <div class="page-card">
-                <div class="card-header">颜色调色板</div>
-                <div class="card-body">
-                    <p class="page-description">颜色选择和管理工具，支持多种颜色格式和自定义颜色。</p>
-                    <a href="color-palette.html" class="page-link">访问页面</a>
-                </div>
-            </div>
-
-            <!-- Cursor更新 -->
-            <div class="page-card">
-                <div class="card-header">Cursor更新信息</div>
-                <div class="card-body">
-                    <p class="page-description">Cursor编辑器0.49.x版本的更新信息。</p>
-                    <a href="cursor_update_0.49.x.html" class="page-link">访问页面</a>
-                </div>
-            </div>
-
-            <!-- 杭州旅行 -->
-            <div class="page-card">
-                <div class="card-header">杭州五一旅行攻略</div>
-                <div class="card-body">
-                    <p class="page-description">杭州五日游行程规划和攻略。</p>
-                    <a href="hangzhou-may-day-trip.html" class="page-link">访问页面</a>
-                </div>
-            </div>
-
-            <!-- 在这里添加新页面的卡片 -->
-            <!-- 复制下面的模板并修改内容来添加新页面 -->
-            <!--
-            <div class="page-card">
-                <div class="card-header">页面标题</div>
-                <div class="card-body">
-                    <p class="page-description">页面描述</p>
-                    <a href="页面文件名.html" class="page-link">访问页面</a>
-                </div>
-            </div>
-            -->
         </div>
 
         <footer>
@@ -213,6 +176,62 @@
             month: 'long',
             day: 'numeric'
         });
+
+        // 动态获取仓库中的HTML文件并生成链接
+        async function fetchRepositoryFiles() {
+            const username = 'fengshengbanxia'; // 您的GitHub用户名
+            const repo = 'website'; // 您的仓库名
+            const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                // 过滤出HTML文件，排除index.html
+                const htmlFiles = data.filter(file =>
+                    file.name.endsWith('.html') && file.name !== 'index.html'
+                );
+
+                const pageGrid = document.querySelector('.page-grid');
+
+                // 清除现有的静态卡片
+                pageGrid.innerHTML = '';
+
+                // 为每个HTML文件创建卡片
+                htmlFiles.forEach(file => {
+                    // 生成页面标题（移除.html后缀并美化）
+                    const title = file.name
+                        .replace('.html', '')
+                        .split('-')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' ');
+
+                    const card = document.createElement('div');
+                    card.className = 'page-card';
+                    card.innerHTML = `
+                        <div class="card-header">${title}</div>
+                        <div class="card-body">
+                            <p class="page-description">点击访问${title}页面</p>
+                            <a href="${file.name}" class="page-link">访问页面</a>
+                        </div>
+                    `;
+
+                    pageGrid.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error('获取仓库文件失败:', error);
+                document.querySelector('.page-grid').innerHTML = `
+                    <div class="error-message">
+                        <p>无法加载页面列表。请刷新页面重试。</p>
+                        <p>错误信息: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 页面加载时获取文件列表
+        window.addEventListener('DOMContentLoaded', fetchRepositoryFiles);
     </script>
 </body>
 </html>
