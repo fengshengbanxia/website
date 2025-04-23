@@ -6,13 +6,24 @@
     <title>我的网页导航</title>
     <style>
         :root {
-            --primary-color: #4a90e2;
+            /* 鉢金科技风配色 */
+            --primary-color: #3498db;
             --secondary-color: #f8f9fa;
-            --text-color: #333;
-            --link-color: #2970b5;
-            --link-hover-color: #1e5b8e;
-            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --header-bg: linear-gradient(135deg, #4a90e2, #5170c5);
+            --text-color: #2c3e50;
+            --link-color: #2980b9;
+            --link-hover-color: #1a5276;
+            --card-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            --header-bg: linear-gradient(135deg, #3498db, #2c3e50);
+            --card-header-bg: #3498db;
+            --card-bg: #fff;
+            --btn-primary-bg: #3498db;
+            --btn-primary-color: #fff;
+            --btn-primary-hover: #2980b9;
+            --pagination-active-bg: #3498db;
+            --pagination-active-color: #fff;
+            --pagination-hover-bg: #eaeaea;
+            --gold-accent: #f39c12;
+            --tech-accent: #2ecc71;
         }
 
         * {
@@ -42,6 +53,25 @@
             margin-bottom: 30px;
             text-align: center;
             box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: headerShimmer 3s infinite;
+        }
+
+        @keyframes headerShimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
         }
 
         h1 {
@@ -56,7 +86,7 @@
 
         .page-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 25px;
             margin-top: 20px;
         }
@@ -77,11 +107,30 @@
         }
 
         .card-header {
-            background-color: var(--primary-color);
+            background-color: var(--card-header-bg);
             color: white;
             padding: 15px;
             font-size: 1.2rem;
             font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--gold-accent), transparent);
+            animation: shimmer 2s infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
         }
 
         .card-body {
@@ -119,18 +168,91 @@
 
         .page-link {
             display: inline-block;
-            background-color: var(--primary-color);
-            color: white;
+            background-color: var(--btn-primary-bg);
+            color: var(--btn-primary-color);
             text-decoration: none;
             padding: 8px 15px;
             border-radius: 5px;
             font-weight: bold;
-            transition: background-color 0.2s ease;
+            transition: all 0.2s ease;
             margin-top: auto;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .page-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.3s ease;
+            z-index: -1;
         }
 
         .page-link:hover {
-            background-color: var(--link-hover-color);
+            background-color: var(--btn-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .page-link:hover::before {
+            left: 100%;
+            transition: all 0.3s ease;
+        }
+
+        /* 分页控件样式 */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        .pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .pagination li {
+            margin: 0;
+        }
+
+        .pagination button {
+            border: none;
+            background-color: white;
+            color: var(--text-color);
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            border-right: 1px solid #eee;
+        }
+
+        .pagination li:last-child button {
+            border-right: none;
+        }
+
+        .pagination button:hover {
+            background-color: var(--pagination-hover-bg);
+        }
+
+        .pagination button.active {
+            background-color: var(--pagination-active-bg);
+            color: var(--pagination-active-color);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         footer {
@@ -190,6 +312,13 @@
             </div>
         </div>
 
+        <!-- 分页控件 -->
+        <div class="pagination-container">
+            <ul class="pagination">
+                <!-- 分页按钮将通过JavaScript动态生成 -->
+            </ul>
+        </div>
+
         <footer>
             <p>© 2025 我的网页集合</p>
             <p class="last-updated">最后更新: <span id="last-updated-date">2025年4月23日</span></p>
@@ -205,6 +334,117 @@
         });
 
         // 动态获取仓库中的HTML文件并生成链接
+        // 分页变量
+        let currentPage = 1;
+        const cardsPerPage = 15; // 5行3列 = 15个卡片
+        let allHtmlFiles = [];
+
+        // 显示指定页的卡片
+        function showPage(page) {
+            const pageGrid = document.querySelector('.page-grid');
+            pageGrid.innerHTML = '';
+
+            // 计算当前页的卡片
+            const startIndex = (page - 1) * cardsPerPage;
+            const endIndex = Math.min(startIndex + cardsPerPage, allHtmlFiles.length);
+            const currentPageFiles = allHtmlFiles.slice(startIndex, endIndex);
+
+            // 创建当前页的卡片
+            currentPageFiles.forEach(file => {
+                createCard(file, pageGrid);
+            });
+
+            // 更新分页按钮状态
+            updatePagination();
+        }
+
+        // 更新分页控件
+        function updatePagination() {
+            const totalPages = Math.ceil(allHtmlFiles.length / cardsPerPage);
+            const paginationElement = document.querySelector('.pagination');
+            paginationElement.innerHTML = '';
+
+            // 上一页按钮
+            const prevLi = document.createElement('li');
+            const prevButton = document.createElement('button');
+            prevButton.textContent = '上一页';
+            prevButton.disabled = currentPage === 1;
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    showPage(currentPage);
+                }
+            });
+            prevLi.appendChild(prevButton);
+            paginationElement.appendChild(prevLi);
+
+            // 页码按钮
+            for (let i = 1; i <= totalPages; i++) {
+                const li = document.createElement('li');
+                const button = document.createElement('button');
+                button.textContent = i;
+                if (i === currentPage) {
+                    button.classList.add('active');
+                }
+                button.addEventListener('click', () => {
+                    currentPage = i;
+                    showPage(currentPage);
+                });
+                li.appendChild(button);
+                paginationElement.appendChild(li);
+            }
+
+            // 下一页按钮
+            const nextLi = document.createElement('li');
+            const nextButton = document.createElement('button');
+            nextButton.textContent = '下一页';
+            nextButton.disabled = currentPage === totalPages || totalPages === 0;
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    showPage(currentPage);
+                }
+            });
+            nextLi.appendChild(nextButton);
+            paginationElement.appendChild(nextLi);
+        }
+
+        // 创建卡片函数
+        function createCard(file, pageGrid) {
+            // 生成页面标题（移除.html后缀并美化）
+            const title = file.name
+                .replace('.html', '')
+                .split('-')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+
+            // 为不同页面设置预览图
+            let previewImage = '';
+            const baseUrl = window.location.origin; // 获取当前域名
+            const imageName = file.name.replace('.html', '.png');
+            previewImage = `${baseUrl}/image/${imageName}`;
+
+            // 如果是chengdu_trip.html，使用对应的chengdu_trip.png
+            if (file.name === 'chengdu_trip.html') {
+                previewImage = `${baseUrl}/image/chengdu_trip.png`;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'page-card';
+            card.innerHTML = `
+                <div class="card-header">${title}</div>
+                <div class="card-body">
+                    <div class="page-preview">
+                        <img src="${previewImage}" alt="${title} 预览" onerror="this.onerror=null; this.src='${baseUrl}/image/default.png'">
+                    </div>
+                    <p class="page-description">点击访问${title}页面</p>
+                    <a href="${file.name}" class="page-link">访问页面</a>
+                </div>
+            `;
+
+            pageGrid.appendChild(card);
+        }
+
         async function fetchRepositoryFiles() {
             const username = 'fengshengbanxia'; // 您的GitHub用户名
             const repo = 'website'; // 您的仓库名
@@ -215,54 +455,12 @@
                 const data = await response.json();
 
                 // 过滤出HTML文件，排除index.html
-                const htmlFiles = data.filter(file =>
+                allHtmlFiles = data.filter(file =>
                     file.name.endsWith('.html') && file.name !== 'index.html'
                 );
 
-                const pageGrid = document.querySelector('.page-grid');
-
-                // 清除现有的静态卡片
-                pageGrid.innerHTML = '';
-
-                // 为每个HTML文件创建卡片
-                htmlFiles.forEach(file => {
-                    // 生成页面标题（移除.html后缀并美化）
-                    const title = file.name
-                        .replace('.html', '')
-                        .split('-')
-                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                        .join(' ');
-
-                    // 为不同页面设置预览图
-                    let previewImage = '';
-
-                    // 从仓库的image目录获取预览图
-                    // 预览图的文件名与HTML文件名相同，只是扩展名为png
-                    const baseUrl = window.location.origin; // 获取当前域名
-                    const imageName = file.name.replace('.html', '.png');
-                    previewImage = `${baseUrl}/image/${imageName}`;
-
-                    // 如果是chengdu_trip.html，使用对应的chengdu_trip.png
-                    if (file.name === 'chengdu_trip.html') {
-                        previewImage = `${baseUrl}/image/chengdu_trip.png`;
-                    }
-
-                    const card = document.createElement('div');
-                    card.className = 'page-card';
-                    card.innerHTML = `
-                        <div class="card-header">${title}</div>
-                        <div class="card-body">
-                            <div class="page-preview">
-                                <img src="${previewImage}" alt="${title} 预览" onerror="this.onerror=null; this.src='${baseUrl}/image/default.png'">
-                            </div>
-                            <p class="page-description">点击访问${title}页面</p>
-                            <a href="${file.name}" class="page-link">访问页面</a>
-                        </div>
-                    `;
-
-                    pageGrid.appendChild(card);
-                });
-
+                // 显示第一页
+                showPage(currentPage);
             } catch (error) {
                 console.error('获取仓库文件失败:', error);
                 document.querySelector('.page-grid').innerHTML = `
