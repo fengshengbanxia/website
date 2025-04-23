@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网页计算器</title>
+    <style>
+        :root {
+            /* 默认主题 (深色) */
+            --bg-color: #f5f5f5;
+            --calc-bg: #333;
+            --display-bg: #222;
+            --btn-number-bg: #555;
+            --btn-number-color: white;
+            --btn-operator-bg: #ff9500;
+            --btn-operator-color: white;
+            --btn-equals-bg: #ff9500;
+            --btn-equals-color: white;
+            --btn-clear-bg: #a5a5a5;
+            --btn-clear-color: black;
+            --btn-scientific-bg: #444;
+            --btn-scientific-color: white;
+            --title-color: white;
+            --display-text-color: white;
+            --btn-mode-bg: #555;
+            --btn-mode-color: white;
+            --btn-mode-active-bg: #ff9500;
+            --btn-mode-active-color: white;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        /* 浅色主题 */
+        .theme-light {
+            --bg-color: #f0f0f0;
+            --calc-bg: #e0e0e0;
+            --display-bg: #f8f8f8;
+            --btn-number-bg: #d4d4d4;
+            --btn-number-color: #333;
+            --btn-operator-bg: #4a90e2;
+            --btn-operator-color: white;
+            --btn-equals-bg: #4a90e2;
+            --btn-equals-color: white;
+            --btn-clear-bg: #ff6b6b;
+            --btn-clear-color: white;
+            --btn-scientific-bg: #c0c0c0;
+            --btn-scientific-color: #333;
+            --title-color: #333;
+            --display-text-color: #333;
+            --btn-mode-bg: #d4d4d4;
+            --btn-mode-color: #333;
+            --btn-mode-active-bg: #4a90e2;
+            --btn-mode-active-color: white;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        /* 蓝色主题 */
+        .theme-blue {
+            --bg-color: #e6f7ff;
+            --calc-bg: #1a5276;
+            --display-bg: #2980b9;
+            --btn-number-bg: #3498db;
+            --btn-number-color: white;
+            --btn-operator-bg: #f39c12;
+            --btn-operator-color: white;
+            --btn-equals-bg: #f39c12;
+            --btn-equals-color: white;
+            --btn-clear-bg: #e74c3c;
+            --btn-clear-color: white;
+            --btn-scientific-bg: #2c3e50;
+            --btn-scientific-color: white;
+            --title-color: white;
+            --display-text-color: white;
+            --btn-mode-bg: #3498db;
+            --btn-mode-color: white;
+            --btn-mode-active-bg: #f39c12;
+            --btn-mode-active-color: white;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+        }
+
+        /* 粉色主题 */
+        .theme-pink {
+            --bg-color: #fff0f5;
+            --calc-bg: #d81b60;
+            --display-bg: #c2185b;
+            --btn-number-bg: #f06292;
+            --btn-number-color: white;
+            --btn-operator-bg: #8e24aa;
+            --btn-operator-color: white;
+            --btn-equals-bg: #8e24aa;
+            --btn-equals-color: white;
+            --btn-clear-bg: #7b1fa2;
+            --btn-clear-color: white;
+            --btn-scientific-bg: #ad1457;
+            --btn-scientific-color: white;
+            --title-color: white;
+            --display-text-color: white;
+            --btn-mode-bg: #f06292;
+            --btn-mode-color: white;
+            --btn-mode-active-bg: #8e24aa;
+            --btn-mode-active-color: white;
+            --shadow-color: rgba(216, 27, 96, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            transition: background-color 0.3s ease;
+        }
+
+        .calculator {
+            width: 360px;
+            background-color: var(--calc-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            transition: all 0.3s ease;
+        }
+
+        .calculator.scientific {
+            width: 560px;
+        }
+
+        .display {
+            width: 100%;
+            height: 50px;
+            background-color: var(--display-bg);
+            border-radius: 5px;
+            margin-bottom: 20px;
+            padding: 10px;
+            text-align: right;
+            color: var(--display-text-color);
+            font-size: 2.5rem;
+            overflow: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .mode-switch {
+            display: flex;
+            justify-content: center;
+        }
+
+        .mode-switch button {
+            background-color: var(--btn-mode-bg);
+            color: var(--btn-mode-color);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin: 0 5px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .mode-switch button.active {
+            background-color: var(--btn-mode-active-bg);
+            color: var(--btn-mode-active-color);
+        }
+
+        .theme-selector {
+            position: relative;
+        }
+
+        .theme-btn {
+            background-color: var(--btn-mode-bg);
+            color: var(--btn-mode-color);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .theme-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: var(--calc-bg);
+            border-radius: 5px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            padding: 10px;
+            z-index: 10;
+            display: none;
+        }
+
+        .theme-dropdown.show {
+            display: block;
+        }
+
+        .theme-option {
+            padding: 8px 15px;
+            cursor: pointer;
+            color: var(--title-color);
+            transition: background-color 0.2s;
+            border-radius: 3px;
+            margin-bottom: 5px;
+        }
+
+        .theme-option:hover {
+            background-color: var(--btn-number-bg);
+        }
+
+        .theme-option:last-child {
+            margin-bottom: 0;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+        }
+
+        .scientific-buttons {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-gap: 8px;
+            margin-bottom: 10px;
+            display: none;
+            grid-template-rows: repeat(3, 1fr);
+        }
+
+        .calculator.scientific .scientific-buttons {
+            display: grid;
+        }
+
+        button {
+            height: 60px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s, transform 0.1s;
+        }
+
+        .scientific-btn {
+            height: 50px;
+            background-color: var(--btn-scientific-bg);
+            color: var(--btn-scientific-color);
+            font-size: 1.2rem;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .number {
+            background-color: var(--btn-number-bg);
+            color: var(--btn-number-color);
+        }
+
+        .operator {
+            background-color: var(--btn-operator-bg);
+            color: var(--btn-operator-color);
+        }
+
+        .equals {
+            background-color: var(--btn-equals-bg);
+            color: var(--btn-equals-color);
+        }
+
+        .clear {
+            background-color: var(--btn-clear-bg);
+            color: var(--btn-clear-color);
+        }
+
+        .decimal {
+            background-color: var(--btn-number-bg);
+            color: var(--btn-number-color);
+        }
+
+        .zero {
+            grid-column: span 2;
+        }
+
+        .memory-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .calculator.scientific .memory-row {
+            display: flex;
+        }
+
+        .memory-btn {
+            height: 40px;
+            width: 80px;
+            background-color: var(--btn-scientific-bg);
+            color: var(--btn-scientific-color);
+            font-size: 1rem;
+            border-radius: 5px;
+        }
+
+        .title {
+            color: var(--title-color);
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        @media (max-width: 500px) {
+            .calculator {
+                width: 320px;
+            }
+            .calculator.scientific {
+                width: 320px;
+            }
+            .scientific-buttons {
+                grid-template-columns: repeat(4, 1fr);
+                grid-template-rows: repeat(5, 1fr);
+            }
+            button {
+                height: 50px;
+                font-size: 1.2rem;
+            }
+            .scientific-btn {
+                height: 40px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator" id="calculator">
+        <div class="title">网页计算器</div>
+        <div class="controls">
+            <div class="mode-switch">
+                <button id="standard-mode" class="active" onclick="switchMode('standard')">标准</button>
+                <button id="scientific-mode" onclick="switchMode('scientific')">科学</button>
+            </div>
+            <div class="theme-selector">
+                <button class="theme-btn" onclick="toggleThemeDropdown()">主题</button>
+                <div class="theme-dropdown" id="theme-dropdown">
+                    <div class="theme-option" onclick="setTheme('default')">黑色主题</div>
+                    <div class="theme-option" onclick="setTheme('light')">浅色主题</div>
+                    <div class="theme-option" onclick="setTheme('blue')">蓝色主题</div>
+                    <div class="theme-option" onclick="setTheme('pink')">粉色主题</div>
+                </div>
+            </div>
+        </div>
+        <div class="memory-row" id="memory-row">
+            <button class="memory-btn" onclick="calculateMemory('mc')">MC</button>
+            <button class="memory-btn" onclick="calculateMemory('mr')">MR</button>
+            <button class="memory-btn" onclick="calculateMemory('m+')">M+</button>
+            <button class="memory-btn" onclick="calculateMemory('m-')">M-</button>
+        </div>
+        <div class="display" id="display">0</div>
+        <div class="scientific-buttons" id="scientific-buttons">
+            <button class="scientific-btn" onclick="appendParenthesis('(')">(</button>
+            <button class="scientific-btn" onclick="appendParenthesis(')')">)</button>
+            <button class="scientific-btn" onclick="calculateFunction('square')">x²</button>
+            <button class="scientific-btn" onclick="calculateFunction('cube')">x³</button>
+            <button class="scientific-btn" onclick="calculateFunction('sqrt')">√</button>
+            <button class="scientific-btn" onclick="calculateFunction('1/x')">1/x</button>
+
+            <button class="scientific-btn" onclick="calculateFunction('sin')">sin</button>
+            <button class="scientific-btn" onclick="calculateFunction('cos')">cos</button>
+            <button class="scientific-btn" onclick="calculateFunction('tan')">tan</button>
+            <button class="scientific-btn" onclick="appendNumber('3.14159')">π</button>
+            <button class="scientific-btn" onclick="appendOperator('%')">%</button>
+            <button class="scientific-btn" onclick="appendOperator('**')">^</button>
+
+            <button class="scientific-btn" onclick="calculateFunction('log')">log</button>
+            <button class="scientific-btn" onclick="calculateFunction('ln')">ln</button>
+            <button class="scientific-btn" onclick="appendParenthesis('Math.abs(')">|x|</button>
+            <button class="scientific-btn" onclick="calculateFunction('exp')">e^x</button>
+            <button class="scientific-btn" onclick="appendNumber('2.71828')">e</button>
+            <button class="scientific-btn" onclick="calculateFunction('10^x')">10^x</button>
+        </div>
+        <div class="buttons">
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="operator" onclick="appendOperator('/')">/</button>
+            <button class="operator" onclick="appendOperator('*')">×</button>
+            <button class="operator" onclick="backspace()">⌫</button>
+
+            <button class="number" onclick="appendNumber('7')">7</button>
+            <button class="number" onclick="appendNumber('8')">8</button>
+            <button class="number" onclick="appendNumber('9')">9</button>
+            <button class="operator" onclick="appendOperator('-')">-</button>
+
+            <button class="number" onclick="appendNumber('4')">4</button>
+            <button class="number" onclick="appendNumber('5')">5</button>
+            <button class="number" onclick="appendNumber('6')">6</button>
+            <button class="operator" onclick="appendOperator('+')">+</button>
+
+            <button class="number" onclick="appendNumber('1')">1</button>
+            <button class="number" onclick="appendNumber('2')">2</button>
+            <button class="number" onclick="appendNumber('3')">3</button>
+            <button class="equals" onclick="calculate()">=</button>
+
+            <button class="number zero" onclick="appendNumber('0')">0</button>
+            <button class="decimal" onclick="appendDecimal()">.</button>
+        </div>
+    </div>
+
+    <script>
+        let displayValue = '0';
+        let waitingForOperand = false;
+        let currentMode = 'standard';
+        let currentTheme = 'default';
+        let memoryValue = 0;
+
+        function updateDisplay() {
+            document.getElementById('display').textContent = displayValue;
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            const calculator = document.getElementById('calculator');
+            const standardBtn = document.getElementById('standard-mode');
+            const scientificBtn = document.getElementById('scientific-mode');
+
+            if (mode === 'scientific') {
+                calculator.classList.add('scientific');
+                standardBtn.classList.remove('active');
+                scientificBtn.classList.add('active');
+            } else {
+                calculator.classList.remove('scientific');
+                standardBtn.classList.add('active');
+                scientificBtn.classList.remove('active');
+            }
+        }
+
+        function toggleThemeDropdown() {
+            const dropdown = document.getElementById('theme-dropdown');
+            dropdown.classList.toggle('show');
+
+            // 点击其他地方关闭下拉菜单
+            document.addEventListener('click', function closeDropdown(e) {
+                if (!e.target.closest('.theme-selector')) {
+                    dropdown.classList.remove('show');
+                    document.removeEventListener('click', closeDropdown);
+                }
+            });
+        }
+
+        function setTheme(theme) {
+            // 移除当前主题类
+            document.body.classList.remove('theme-light', 'theme-blue', 'theme-pink');
+
+            // 添加新主题类
+            if (theme !== 'default') {
+                document.body.classList.add('theme-' + theme);
+            }
+
+            currentTheme = theme;
+
+            // 关闭下拉菜单
+            document.getElementById('theme-dropdown').classList.remove('show');
+
+            // 保存主题偏好到本地存储
+            localStorage.setItem('calculatorTheme', theme);
+        }
+
+        function appendNumber(number) {
+            if (displayValue === '0' || waitingForOperand) {
+                displayValue = number;
+                waitingForOperand = false;
+            } else {
+                displayValue += number;
+            }
+            updateDisplay();
+        }
+
+        function appendOperator(operator) {
+            // Check if the last character is an operator
+            const lastChar = displayValue.slice(-1);
+            if (['+', '-', '*', '/', '%', '**'].includes(lastChar)) {
+                // Replace the last operator with the new one
+                displayValue = displayValue.slice(0, -1) + operator;
+            } else {
+                displayValue += operator;
+            }
+            waitingForOperand = false;
+            updateDisplay();
+        }
+
+        function appendParenthesis(parenthesis) {
+            if (waitingForOperand) {
+                displayValue = parenthesis;
+                waitingForOperand = false;
+            } else {
+                // If adding an opening parenthesis after a number, add multiplication operator
+                if (parenthesis === '(' && /[0-9\)]$/.test(displayValue)) {
+                    displayValue += '*' + parenthesis;
+                } else {
+                    displayValue += parenthesis;
+                }
+            }
+            updateDisplay();
+        }
+
+        function calculateMemory(action) {
+            switch(action) {
+                case 'mc': // Memory Clear
+                    memoryValue = 0;
+                    break;
+                case 'mr': // Memory Recall
+                    displayValue = memoryValue.toString();
+                    waitingForOperand = true;
+                    updateDisplay();
+                    break;
+                case 'm+': // Memory Add
+                    try {
+                        // Calculate current expression if needed
+                        if (displayValue.includes('+') || displayValue.includes('-') ||
+                            displayValue.includes('*') || displayValue.includes('/') ||
+                            displayValue.includes('%') || displayValue.includes('**') ||
+                            displayValue.includes('(') || displayValue.includes(')')) {
+                            calculate();
+                        }
+                        memoryValue += parseFloat(displayValue);
+                    } catch (error) {
+                        // Ignore if there's an error
+                    }
+                    waitingForOperand = true;
+                    break;
+                case 'm-': // Memory Subtract
+                    try {
+                        // Calculate current expression if needed
+                        if (displayValue.includes('+') || displayValue.includes('-') ||
+                            displayValue.includes('*') || displayValue.includes('/') ||
+                            displayValue.includes('%') || displayValue.includes('**') ||
+                            displayValue.includes('(') || displayValue.includes(')')) {
+                            calculate();
+                        }
+                        memoryValue -= parseFloat(displayValue);
+                    } catch (error) {
+                        // Ignore if there's an error
+                    }
+                    waitingForOperand = true;
+                    break;
+            }
+        }
+
+        function appendDecimal() {
+            // Check if we need to start a new number
+            if (waitingForOperand) {
+                displayValue = '0.';
+                waitingForOperand = false;
+                updateDisplay();
+                return;
+            }
+
+            // Find the last number in the expression
+            const parts = displayValue.split(/[\+\-\*\/\%\*\*]/);
+            const lastPart = parts[parts.length - 1];
+
+            // If the last number doesn't contain a decimal point, add one
+            if (!lastPart.includes('.')) {
+                displayValue += '.';
+                updateDisplay();
+            }
+        }
+
+        function clearDisplay() {
+            displayValue = '0';
+            waitingForOperand = false;
+            updateDisplay();
+        }
+
+        function backspace() {
+            if (displayValue.length === 1 || (displayValue.length === 2 && displayValue.startsWith('-'))) {
+                displayValue = '0';
+            } else {
+                displayValue = displayValue.slice(0, -1);
+            }
+            updateDisplay();
+        }
+
+        function calculateFunction(func) {
+            try {
+                let value;
+
+                // If there's an expression, calculate it first
+                if (displayValue.includes('+') ||
+                    displayValue.includes('-') ||
+                    displayValue.includes('*') ||
+                    displayValue.includes('/') ||
+                    displayValue.includes('%') ||
+                    displayValue.includes('**') ||
+                    displayValue.includes('(') ||
+                    displayValue.includes(')')) {
+                    calculate();
+                }
+
+                value = parseFloat(displayValue);
+
+                switch(func) {
+                    case 'sqrt':
+                        if (value < 0) throw new Error('Cannot calculate square root of negative number');
+                        displayValue = Math.sqrt(value).toString();
+                        break;
+                    case 'square':
+                        displayValue = (value * value).toString();
+                        break;
+                    case 'cube':
+                        displayValue = (value * value * value).toString();
+                        break;
+                    case '1/x':
+                        if (value === 0) throw new Error('Cannot divide by zero');
+                        displayValue = (1 / value).toString();
+                        break;
+                    case 'sin':
+                        displayValue = Math.sin(value * Math.PI / 180).toString(); // Convert to radians
+                        break;
+                    case 'cos':
+                        displayValue = Math.cos(value * Math.PI / 180).toString(); // Convert to radians
+                        break;
+                    case 'tan':
+                        displayValue = Math.tan(value * Math.PI / 180).toString(); // Convert to radians
+                        break;
+                    case 'log':
+                        if (value <= 0) throw new Error('Cannot calculate logarithm of non-positive number');
+                        displayValue = Math.log10(value).toString();
+                        break;
+                    case 'ln':
+                        if (value <= 0) throw new Error('Cannot calculate natural logarithm of non-positive number');
+                        displayValue = Math.log(value).toString();
+                        break;
+                    case 'exp':
+                        displayValue = Math.exp(value).toString();
+                        break;
+                    case '10^x':
+                        displayValue = Math.pow(10, value).toString();
+                        break;
+                }
+
+                // Format the result
+                if (displayValue.includes('.')) {
+                    displayValue = parseFloat(displayValue).toFixed(8).replace(/\.?0+$/, '');
+                }
+
+                waitingForOperand = true;
+                updateDisplay();
+            } catch (error) {
+                displayValue = 'Error';
+                waitingForOperand = true;
+                updateDisplay();
+
+                // Reset after a short delay
+                setTimeout(() => {
+                    clearDisplay();
+                }, 1500);
+            }
+        }
+
+        function calculate() {
+            try {
+                // Replace × with * for JavaScript evaluation
+                let expression = displayValue.replace(/×/g, '*');
+
+                // Evaluate the expression
+                let result = eval(expression);
+
+                // Format the result
+                if (Number.isInteger(result)) {
+                    displayValue = result.toString();
+                } else {
+                    // Limit decimal places to avoid very long numbers
+                    displayValue = result.toFixed(8).replace(/\.?0+$/, '');
+                }
+
+                waitingForOperand = true;
+                updateDisplay();
+            } catch (error) {
+                displayValue = 'Error';
+                waitingForOperand = true;
+                updateDisplay();
+
+                // Reset after a short delay
+                setTimeout(() => {
+                    clearDisplay();
+                }, 1500);
+            }
+        }
+
+        // 初始化显示
+        updateDisplay();
+
+        // 从本地存储加载主题偏好
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('calculatorTheme');
+            if (savedTheme) {
+                setTheme(savedTheme);
+            }
+        });
+    </script>
+</body>
+</html>
