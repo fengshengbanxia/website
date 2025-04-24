@@ -143,7 +143,10 @@ website/
 
 ## 界面展示
 
-![image](https://github.com/user-attachments/assets/37131360-a2b6-4050-8fe5-e9a3d91c81cc)
+![image](https://github.com/user-attachments/assets/148bd613-ba22-4af9-92af-7a54bf0ea132)
+![image](https://github.com/user-attachments/assets/212e6f02-0e7a-4438-8dee-fc203d942266)
+
+
 
 
 
