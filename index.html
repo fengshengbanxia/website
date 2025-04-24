@@ -357,6 +357,135 @@
             transform: rotate(30deg);
         }
 
+        /* 访问统计样式 */
+        .visit-count {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: var(--gold-accent);
+            color: white;
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 2;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .visit-count svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .popular-pages {
+            margin-bottom: 30px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            transition: background-color 0.3s ease;
+        }
+
+        .popular-pages h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .popular-pages h2 svg {
+            width: 24px;
+            height: 24px;
+            color: var(--gold-accent);
+        }
+
+        .popular-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .popular-item {
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .popular-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .popular-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+
+        .popular-item .popular-title {
+            font-weight: bold;
+        }
+
+        .popular-item .popular-count {
+            font-size: 0.8rem;
+            color: var(--gold-accent);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .popular-item .popular-count svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .sort-options {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        .sort-button {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .sort-button:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .sort-button.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .sort-button svg {
+            width: 16px;
+            height: 16px;
+        }
+
         .error-message {
             background-color: #fff3f3;
             border-left: 4px solid #e74c3c;
@@ -475,6 +604,45 @@
             <div class="search-results" id="search-results"></div>
         </div>
 
+        <!-- 热门页面区域 -->
+        <div class="popular-pages" id="popular-pages">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                </svg>
+                热门页面
+            </h2>
+            <div class="popular-list" id="popular-list">
+                <!-- 热门页面将通过JavaScript动态生成 -->
+            </div>
+        </div>
+
+        <!-- 排序选项 -->
+        <div class="sort-options">
+            <button class="sort-button active" id="sort-default">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="21" y1="10" x2="3" y2="10"></line>
+                    <line x1="21" y1="6" x2="3" y2="6"></line>
+                    <line x1="21" y1="14" x2="3" y2="14"></line>
+                    <line x1="21" y1="18" x2="3" y2="18"></line>
+                </svg>
+                默认排序
+            </button>
+            <button class="sort-button" id="sort-name">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                按名称
+            </button>
+            <button class="sort-button" id="sort-visits">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                按访问量
+            </button>
+        </div>
+
         <div class="page-grid">
             <!-- 页面卡片将通过JavaScript动态生成 -->
             <div class="loading-message" style="text-align: center; grid-column: 1/-1; padding: 30px;">
@@ -564,6 +732,8 @@
         const cardsPerPage = 15; // 5行3列 = 15个卡片
         let allHtmlFiles = [];
         let filteredFiles = []; // 存储搜索过滤后的文件
+        let pageVisits = {}; // 存储页面访问次数
+        let currentSortMethod = 'default'; // 当前排序方式
 
         // 显示指定页的卡片
         function showPage(page) {
@@ -668,16 +838,26 @@
                 previewImage = `${baseUrl}/image/chengdu_trip.png`;
             }
 
+            // 获取页面访问次数
+            const visits = pageVisits[file.name] || 0;
+
             const card = document.createElement('div');
             card.className = 'page-card';
             card.innerHTML = `
                 <div class="card-header">${title}</div>
+                <div class="visit-count">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    ${visits}
+                </div>
                 <div class="card-body">
                     <div class="page-preview">
                         <img src="${previewImage}" alt="${title} 预览" onerror="this.onerror=null; this.src='${baseUrl}/image/default.png'">
                     </div>
                     <p class="page-description">点击访问${title}页面</p>
-                    <a href="${file.name}" class="page-link">访问页面</a>
+                    <a href="${file.name}" class="page-link" onclick="recordVisit('${file.name}')">访问页面</a>
                 </div>
             `;
 
@@ -698,8 +878,13 @@
                     file.name.endsWith('.html') && file.name !== 'index.html'
                 );
 
+                // 应用当前排序方法
+                sortFiles();
+
                 // 显示第一页
                 showPage(currentPage);
+
+                return true; // 成功加载
             } catch (error) {
                 console.error('获取仓库文件失败:', error);
                 document.querySelector('.page-grid').innerHTML = `
@@ -708,6 +893,7 @@
                         <p>错误信息: ${error.message}</p>
                     </div>
                 `;
+                return false; // 加载失败
             }
         }
 
@@ -716,6 +902,7 @@
             if (!query || query.trim() === '') {
                 filteredFiles = [];
                 currentPage = 1;
+                sortFiles(); // 应用当前排序方法
                 showPage(currentPage);
                 return;
             }
@@ -732,6 +919,9 @@
 
                 return title.toLowerCase().includes(query);
             });
+
+            // 应用当前排序方法
+            sortFiles();
 
             // 重置到第一页并显示结果
             currentPage = 1;
@@ -835,11 +1025,202 @@
             });
         }
 
-        // 页面加载时获取文件列表并初始化搜索和主题切换
+        // 记录页面访问
+        function recordVisit(fileName) {
+            // 从本地存储加载访问数据
+            loadVisitData();
+
+            // 增加访问次数
+            if (pageVisits[fileName]) {
+                pageVisits[fileName]++;
+            } else {
+                pageVisits[fileName] = 1;
+            }
+
+            // 保存到本地存储
+            saveVisitData();
+
+            // 更新热门页面区域
+            updatePopularPages();
+        }
+
+        // 加载访问数据
+        function loadVisitData() {
+            const savedData = localStorage.getItem('pageVisits');
+            if (savedData) {
+                pageVisits = JSON.parse(savedData);
+            }
+        }
+
+        // 保存访问数据
+        function saveVisitData() {
+            localStorage.setItem('pageVisits', JSON.stringify(pageVisits));
+        }
+
+        // 更新热门页面区域
+        function updatePopularPages() {
+            const popularList = document.getElementById('popular-list');
+            popularList.innerHTML = '';
+
+            // 获取访问次数排序的页面（前5个）
+            const popularPages = [...allHtmlFiles]
+                .filter(file => pageVisits[file.name] && pageVisits[file.name] > 0)
+                .sort((a, b) => (pageVisits[b.name] || 0) - (pageVisits[a.name] || 0))
+                .slice(0, 5);
+
+            if (popularPages.length === 0) {
+                document.getElementById('popular-pages').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('popular-pages').style.display = 'block';
+
+            // 创建热门页面项
+            popularPages.forEach(file => {
+                const title = file.name
+                    .replace('.html', '')
+                    .split('-')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+
+                const baseUrl = window.location.origin;
+                const imageName = file.name.replace('.html', '.png');
+                let previewImage = `${baseUrl}/image/${imageName}`;
+
+                if (file.name === 'chengdu_trip.html') {
+                    previewImage = `${baseUrl}/image/chengdu_trip.png`;
+                }
+
+                const visits = pageVisits[file.name] || 0;
+
+                const popularItem = document.createElement('a');
+                popularItem.href = file.name;
+                popularItem.className = 'popular-item';
+                popularItem.onclick = () => recordVisit(file.name);
+                popularItem.innerHTML = `
+                    <img src="${previewImage}" alt="${title}" onerror="this.onerror=null; this.src='${baseUrl}/image/default.png'">
+                    <span class="popular-title">${title}</span>
+                    <span class="popular-count">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        ${visits}
+                    </span>
+                `;
+
+                popularList.appendChild(popularItem);
+            });
+        }
+
+        // 初始化排序功能
+        function initSortButtons() {
+            const sortDefaultBtn = document.getElementById('sort-default');
+            const sortNameBtn = document.getElementById('sort-name');
+            const sortVisitsBtn = document.getElementById('sort-visits');
+
+            // 默认排序
+            sortDefaultBtn.addEventListener('click', () => {
+                if (currentSortMethod !== 'default') {
+                    currentSortMethod = 'default';
+                    updateSortButtons();
+                    sortFiles();
+                    currentPage = 1;
+                    showPage(currentPage);
+                }
+            });
+
+            // 按名称排序
+            sortNameBtn.addEventListener('click', () => {
+                if (currentSortMethod !== 'name') {
+                    currentSortMethod = 'name';
+                    updateSortButtons();
+                    sortFiles();
+                    currentPage = 1;
+                    showPage(currentPage);
+                }
+            });
+
+            // 按访问量排序
+            sortVisitsBtn.addEventListener('click', () => {
+                if (currentSortMethod !== 'visits') {
+                    currentSortMethod = 'visits';
+                    updateSortButtons();
+                    sortFiles();
+                    currentPage = 1;
+                    showPage(currentPage);
+                }
+            });
+        }
+
+        // 更新排序按钮状态
+        function updateSortButtons() {
+            document.querySelectorAll('.sort-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            switch (currentSortMethod) {
+                case 'default':
+                    document.getElementById('sort-default').classList.add('active');
+                    break;
+                case 'name':
+                    document.getElementById('sort-name').classList.add('active');
+                    break;
+                case 'visits':
+                    document.getElementById('sort-visits').classList.add('active');
+                    break;
+            }
+        }
+
+        // 排序文件
+        function sortFiles() {
+            const filesToSort = filteredFiles.length > 0 ? filteredFiles : allHtmlFiles;
+
+            switch (currentSortMethod) {
+                case 'default':
+                    // 默认排序（API返回的顺序）
+                    // 不需要额外操作
+                    break;
+
+                case 'name':
+                    // 按名称排序
+                    filesToSort.sort((a, b) => {
+                        const nameA = a.name.toLowerCase();
+                        const nameB = b.name.toLowerCase();
+                        return nameA.localeCompare(nameB);
+                    });
+                    break;
+
+                case 'visits':
+                    // 按访问量排序（从高到低）
+                    filesToSort.sort((a, b) => {
+                        const visitsA = pageVisits[a.name] || 0;
+                        const visitsB = pageVisits[b.name] || 0;
+                        return visitsB - visitsA;
+                    });
+                    break;
+            }
+        }
+
+        // 页面加载时获取文件列表并初始化功能
         window.addEventListener('DOMContentLoaded', () => {
-            fetchRepositoryFiles();
+            // 加载访问数据
+            loadVisitData();
+
+            // 获取文件列表
+            fetchRepositoryFiles().then(() => {
+                // 更新热门页面区域
+                updatePopularPages();
+            });
+
+            // 初始化搜索功能
             initSearch();
+
+            // 初始化主题切换功能
             initThemeToggle();
+
+            // 初始化排序功能
+            initSortButtons();
         });
     </script>
 </body>
