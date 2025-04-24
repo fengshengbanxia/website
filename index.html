@@ -283,6 +283,77 @@
             border-radius: 5px;
         }
 
+        /* 搜索框样式 */
+        .search-container {
+            margin: 0 auto 25px;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-box {
+            display: flex;
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .search-box:focus-within {
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            border-color: var(--gold-accent);
+        }
+
+        .search-input {
+            flex-grow: 1;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            outline: none;
+            background-color: white;
+        }
+
+        .search-button {
+            background-color: var(--btn-primary-bg);
+            color: white;
+            border: none;
+            padding: 0 25px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-button:hover {
+            background-color: var(--btn-primary-hover);
+        }
+
+        .search-icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        .search-results {
+            margin-top: 10px;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        .highlight {
+            background-color: rgba(243, 156, 18, 0.2);
+            padding: 0 2px;
+            border-radius: 3px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            grid-column: 1/-1;
+        }
+
         @media (max-width: 768px) {
             .page-grid {
                 grid-template-columns: 1fr;
@@ -304,6 +375,20 @@
             <h1>我的网页导航</h1>
             <div class="subtitle">所有可用页面的集合（自动更新）</div>
         </header>
+
+        <!-- 搜索框 -->
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="搜索页面..." id="search-input">
+                <button class="search-button" id="search-button">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="search-results" id="search-results"></div>
+        </div>
 
         <div class="page-grid">
             <!-- 页面卡片将通过JavaScript动态生成 -->
@@ -373,16 +458,26 @@
         let currentPage = 1;
         const cardsPerPage = 15; // 5行3列 = 15个卡片
         let allHtmlFiles = [];
+        let filteredFiles = []; // 存储搜索过滤后的文件
 
         // 显示指定页的卡片
         function showPage(page) {
             const pageGrid = document.querySelector('.page-grid');
             pageGrid.innerHTML = '';
 
+            // 使用过滤后的文件列表或全部文件列表
+            const filesToShow = filteredFiles.length > 0 ? filteredFiles : allHtmlFiles;
+
+            if (filesToShow.length === 0) {
+                pageGrid.innerHTML = '<div class="no-results">没有找到匹配的页面</div>';
+                updatePagination();
+                return;
+            }
+
             // 计算当前页的卡片
             const startIndex = (page - 1) * cardsPerPage;
-            const endIndex = Math.min(startIndex + cardsPerPage, allHtmlFiles.length);
-            const currentPageFiles = allHtmlFiles.slice(startIndex, endIndex);
+            const endIndex = Math.min(startIndex + cardsPerPage, filesToShow.length);
+            const currentPageFiles = filesToShow.slice(startIndex, endIndex);
 
             // 创建当前页的卡片
             currentPageFiles.forEach(file => {
@@ -395,7 +490,8 @@
 
         // 更新分页控件
         function updatePagination() {
-            const totalPages = Math.ceil(allHtmlFiles.length / cardsPerPage);
+            const filesToShow = filteredFiles.length > 0 ? filteredFiles : allHtmlFiles;
+            const totalPages = Math.ceil(filesToShow.length / cardsPerPage);
             const paginationElement = document.querySelector('.pagination');
             paginationElement.innerHTML = '';
 
@@ -442,6 +538,9 @@
             });
             nextLi.appendChild(nextButton);
             paginationElement.appendChild(nextLi);
+
+            // 更新搜索结果信息
+            updateSearchResultsInfo();
         }
 
         // 创建卡片函数
@@ -507,8 +606,80 @@
             }
         }
 
-        // 页面加载时获取文件列表
-        window.addEventListener('DOMContentLoaded', fetchRepositoryFiles);
+        // 搜索功能
+        function searchPages(query) {
+            if (!query || query.trim() === '') {
+                filteredFiles = [];
+                currentPage = 1;
+                showPage(currentPage);
+                return;
+            }
+
+            query = query.toLowerCase().trim();
+
+            // 过滤匹配的文件
+            filteredFiles = allHtmlFiles.filter(file => {
+                const title = file.name
+                    .replace('.html', '')
+                    .split('-')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+
+                return title.toLowerCase().includes(query);
+            });
+
+            // 重置到第一页并显示结果
+            currentPage = 1;
+            showPage(currentPage);
+        }
+
+        // 更新搜索结果信息
+        function updateSearchResultsInfo() {
+            const searchResultsElement = document.getElementById('search-results');
+            const searchInput = document.getElementById('search-input');
+            const query = searchInput.value.trim();
+
+            if (query === '') {
+                searchResultsElement.textContent = '';
+                return;
+            }
+
+            const totalResults = filteredFiles.length;
+            if (totalResults === 0) {
+                searchResultsElement.textContent = `没有找到与"${query}"匹配的页面`;
+            } else {
+                searchResultsElement.textContent = `找到 ${totalResults} 个与"${query}"匹配的页面`;
+            }
+        }
+
+        // 初始化搜索功能
+        function initSearch() {
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button');
+
+            // 搜索按钮点击事件
+            searchButton.addEventListener('click', () => {
+                searchPages(searchInput.value);
+            });
+
+            // 输入框输入事件（实时搜索）
+            searchInput.addEventListener('input', () => {
+                searchPages(searchInput.value);
+            });
+
+            // 输入框回车事件
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    searchPages(searchInput.value);
+                }
+            });
+        }
+
+        // 页面加载时获取文件列表并初始化搜索
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchRepositoryFiles();
+            initSearch();
+        });
     </script>
 </body>
 </html>
