@@ -88,6 +88,55 @@ website/
 1. 创建新的HTML文件并上传到GitHub仓库根目录
 2. 创建对应的预览图（与HTML文件同名，扩展名为.png）并上传到`/image/`目录
 3. 导航页面会自动显示新添加的页面
+4. 为新页面添加分类和标签（见下文）
+
+### 为新页面添加分类和标签
+1. 打开`index.html`文件，找到`pageMetadata`对象（约在第800行）
+2. 在对象中添加新页面的元数据，格式如下：
+   ```javascript
+   'your-new-page.html': {
+       category: 'category-id',
+       tags: ['tag-id1', 'tag-id2']
+   }
+   ```
+
+#### 可用的分类
+- `tool`：工具类页面
+- `game`：游戏类页面
+- `document`：文档类页面
+
+#### 可用的标签
+- `utility`：实用工具
+- `development`：开发相关
+- `design`：设计
+- `travel`：旅行
+
+#### 添加新的分类或标签
+如果需要添加新的分类或标签，需要修改以下部分：
+
+1. 添加新分类：
+   - 找到`categories`数组（约在第830行）
+   - 添加新分类，例如：
+   ```javascript
+   { id: 'education', name: '教育', icon: '<svg>...</svg>' }
+   ```
+
+2. 添加新标签：
+   - 找到`tags`数组（约在第840行）
+   - 添加新标签，例如：
+   ```javascript
+   { id: 'education', name: '教育', icon: '<svg>...</svg>' }
+   ```
+
+3. 为新标签添加样式：
+   - 找到标签颜色部分（约在第450行）
+   - 添加新标签样式，例如：
+   ```css
+   .tag-education {
+       background-color: #8e44ad;
+       color: white;
+   }
+   ```
 
 ### 部署更新
 1. 将index.html文件上传到GitHub仓库根目录
